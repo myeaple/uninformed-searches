@@ -16,10 +16,11 @@ public class UIS {
 	public static void main(String[] args) {
 		Graph g = new Graph();
 		
+		g.PrintAdjacencyList();
+		
 		g.BFS("M");
 		g.DFS("M");
-		
-		// TODO: Do an IDS on the graph, printing open & closed at each step.
+		g.IDS("M");
 	}
 	
 	/**

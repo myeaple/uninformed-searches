@@ -16,8 +16,12 @@ public class Graph {
 	
 	private LinkedList<Vertex> bfsOpen;
 	private LinkedList<Vertex> bfsClosed;
+	
 	private Stack<Vertex> dfsOpen;
 	private LinkedList<Vertex> dfsClosed;
+	
+	private Stack<Vertex> idsOpen;
+	private LinkedList<Vertex> idsClosed;
 	
 	private HashMap<String, Vertex> vertices;
 //	private ArrayList<ArrayList<String>> gAdjList;
@@ -216,7 +220,7 @@ public class Graph {
 				qIter = dfsOpen.iterator();
 				break;
 			case IDS:
-//				qIter = idsOpen.iterator();
+				qIter = idsOpen.iterator();
 				break;
 		}
 		while(qIter.hasNext())
@@ -242,7 +246,7 @@ public class Graph {
 				qIter = dfsClosed.iterator();
 				break;
 			case IDS:
-//				qIter = idsClosed.iterator();
+				qIter = idsClosed.iterator();
 				break;
 		}
 		while (qIter.hasNext())
@@ -286,8 +290,10 @@ public class Graph {
 	 * 
 	 * @param find - the name of the node to find
 	 */
-	private void BFSHelper(String find)
+	private boolean BFSHelper(String find)
 	{
+		boolean found = false;
+		
 		// Add vertex A
 		bfsOpen.add(vertices.get(vNames[0]));
 		
@@ -313,11 +319,17 @@ public class Graph {
 			
 			if (bfsOpen.contains(vertices.get(find)))
 			{
-				PrintOpenClosed(SearchType.BFS);
-				System.out.println("Found " + find + "! Done with BFS.");
+				found = true;
 				break;
 			}
 		}
+		
+		PrintOpenClosed(SearchType.BFS);
+		
+		if (found)
+			System.out.println("\nFound " + find + "! Done with search.");
+		
+		return found;
 	}
 	
 	/**
@@ -346,8 +358,10 @@ public class Graph {
 	 * 
 	 * @param find - the name of the node to find
 	 */
-	private void DFSHelper(String find)
+	private boolean DFSHelper(String find)
 	{
+		boolean found = false;
+		
 		// Add vertex A
 		dfsOpen.push(vertices.get(vNames[0]));
 		
@@ -373,11 +387,109 @@ public class Graph {
 			
 			if (dfsOpen.contains(vertices.get(find)))
 			{
-				PrintOpenClosed(SearchType.DFS);
-				System.out.println("Found " + find + "! Done with BFS.");
+				found = true;
 				break;
 			}
 		}
+		
+		PrintOpenClosed(SearchType.DFS);
+		
+		if (found)
+			System.out.println("\nFound " + find + "! Done with search.");
+		
+		return found;
+	}
+	
+	public void IDS(String find)
+	{
+		System.out.println("Beginning IDS with Depth = 0...");
+		
+		boolean found = false;
+		int depth = 0;
+		while (!found)
+		{
+			// Reset the stack and queue.
+			idsOpen = new Stack<Vertex>();
+			idsClosed = new LinkedList<Vertex>();
+			
+			// Add vertex A
+			idsOpen.push(vertices.get(vNames[0]));
+			
+			PrintOpenClosed(SearchType.IDS);
+			
+			found = DLS(find, 
+					depth, 
+					0
+					);
+			
+			// Keep going deeper till we find our node...
+			depth++;
+			
+			// Probably should limit the number of iterations we can do;
+			// however, we know with this graph, we will find the node
+			// eventually.
+//			if (depth >= maxDepth)
+//				break;
+			
+			if (!found)
+				System.out.println("\nWe need to go deeper... Depth = " + depth);
+			else
+				System.out.println("\nFound " + find + "! Done with search.");
+		}
+		
+		System.out.println("Finished IDS!");
+	}
+	
+	private boolean DLS(String find, 
+			int maxDepth, 
+			int currentDepth)
+	{
+		boolean found = false;
+		
+		if (currentDepth <= maxDepth)
+		{			
+			Vertex vCurrent = idsOpen.pop();
+			
+			int recurseTimes = 0;
+			if (currentDepth < maxDepth)
+			{
+				LinkedList<Vertex> next = GetNextVertices(vCurrent);
+				
+				for (int i = 0; i < next.size(); i++)
+				{
+					Vertex vNext = next.get(i);
+					
+					// Only add vertices we don't have in one of our queues.
+					if (!idsOpen.contains(vNext) && !idsClosed.contains(vNext))
+					{
+						idsOpen.push(vNext);
+						recurseTimes++;
+					}
+				}				
+			}
+			
+			idsClosed.add(vCurrent);
+			
+			PrintOpenClosed(SearchType.IDS);
+			
+			if (idsOpen.contains(vertices.get(find)))
+			{
+				return true;
+			}
+			
+			for (int i = 0; i < recurseTimes; i++)
+			{
+				found = DLS(find, 
+						maxDepth, 
+						currentDepth + 1);
+				
+				if (found)
+					return true;
+			}
+		
+		}
+		
+		return found;
 	}
 	
 	/**
