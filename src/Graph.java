@@ -211,16 +211,18 @@ public class Graph {
 		String openStr = "\nOpen: [ ";
 		
 		// Default to BFS.
-		Iterator<Vertex> qIter = bfsOpen.iterator();
+		Iterator<Vertex> qIter;
 		switch (sType)
 		{
-			case BFS:
-				break;
 			case DFS:
 				qIter = dfsOpen.iterator();
 				break;
 			case IDS:
 				qIter = idsOpen.iterator();
+				break;
+			case BFS:
+			default:
+				qIter = bfsOpen.iterator();
 				break;
 		}
 		while(qIter.hasNext())
@@ -237,16 +239,17 @@ public class Graph {
 		String closedStr = "Closed: [ ";
 		
 		// Default to BFS.
-		qIter = bfsClosed.iterator();
 		switch (sType)
 		{
-			case BFS:
-				break;
 			case DFS:
 				qIter = dfsClosed.iterator();
 				break;
 			case IDS:
 				qIter = idsClosed.iterator();
+				break;
+			case BFS:
+			default:
+				qIter = bfsClosed.iterator();
 				break;
 		}
 		while (qIter.hasNext())
