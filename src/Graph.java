@@ -17,10 +17,10 @@ public class Graph {
 	private LinkedList<Vertex> bfsOpen;
 	private LinkedList<Vertex> bfsClosed;
 	
-	private Stack<Vertex> dfsOpen;
+	private LinkedList<Vertex> dfsOpen;
 	private LinkedList<Vertex> dfsClosed;
 	
-	private Stack<Vertex> idsOpen;
+	private LinkedList<Vertex> idsOpen;
 	private LinkedList<Vertex> idsClosed;
 	
 	private HashMap<String, Vertex> vertices;
@@ -344,7 +344,7 @@ public class Graph {
 	 */
 	public void DFS(String find)
 	{
-		dfsOpen = new Stack<Vertex>();
+		dfsOpen = new LinkedList<Vertex>();
 		dfsClosed = new LinkedList<Vertex>();
 		
 		System.out.println("Beginning DFS...");
@@ -376,13 +376,13 @@ public class Graph {
 			
 			LinkedList<Vertex> next = GetNextVertices(vCurrent);
 			
-			for (int i = 0; i < next.size(); i++)
+			for (int i = next.size() - 1; i >= 0; i--)
 			{
 				Vertex vNext = next.get(i);
 				// Only add vertices we don't have in one of our queues.
 				if (!dfsOpen.contains(vNext) && !dfsClosed.contains(vNext))
 				{
-					dfsOpen.push(vNext);
+					dfsOpen.addFirst(vNext);
 				}
 			}
 			
@@ -412,7 +412,7 @@ public class Graph {
 		while (!found)
 		{
 			// Reset the stack and queue.
-			idsOpen = new Stack<Vertex>();
+			idsOpen = new LinkedList<Vertex>();
 			idsClosed = new LinkedList<Vertex>();
 			
 			// Add vertex A
@@ -458,14 +458,14 @@ public class Graph {
 			{
 				LinkedList<Vertex> next = GetNextVertices(vCurrent);
 				
-				for (int i = 0; i < next.size(); i++)
+				for (int i = next.size() - 1; i >= 0; i--)
 				{
 					Vertex vNext = next.get(i);
 					
 					// Only add vertices we don't have in one of our queues.
 					if (!idsOpen.contains(vNext) && !idsClosed.contains(vNext))
 					{
-						idsOpen.push(vNext);
+						idsOpen.addFirst(vNext);
 						recurseTimes++;
 					}
 				}				
